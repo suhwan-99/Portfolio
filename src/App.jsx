@@ -7,7 +7,7 @@ import Footer from './components/Footer'
 // 헤더 이미지를 사용하려면 아래 주석을 해제하고 실제 이미지 경로로 변경하세요
 // import headerImage from './assets/header-image.jpg'
 
-function App() {
+const App = () => {
   const allTechStack = getAllTechStack(projects)
   
   return (
