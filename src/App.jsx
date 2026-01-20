@@ -15,7 +15,7 @@ const App = () => {
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <img 
-            src={'/src/assets/header/header.png'} 
+            src={'/header/header.png'} 
             alt="프론트엔드 포트폴리오 헤더 이미지"
             className={styles.headerImage}
           /> 
