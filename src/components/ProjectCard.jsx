@@ -6,7 +6,7 @@ export const ProjectCard = ({ project }) => {
   const techStackArray = Array.isArray(project.techStack) ? project.techStack : (project.techStack ? [project.techStack] : [])
   
   return (
-    <div className={styles.card} style={{ width: '700px', maxWidth: '100%' }}>
+    <div className={`${styles.card} w-full max-w-full md:max-w-[700px]`}>
       <h2 className={styles.h2}>{project.title}</h2>
       <p className={styles.bodyText}>{project.description}</p>
       

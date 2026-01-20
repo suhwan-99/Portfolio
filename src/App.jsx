@@ -48,7 +48,7 @@ const App = () => {
         )}
         
         {/* 프로젝트 카드 섹션 */}
-        <section className="w-full flex justify-center">
+        <section className="w-full flex justify-center px-4 md:px-6 lg:px-8">
           <div className={styles.grid}>
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />

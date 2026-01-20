@@ -6,7 +6,7 @@ export const styles = {
   header: 'mb-12 md:mb-16',
   headerContainer: 'relative w-full opacity-50',
   headerContent: 'absolute inset-0 flex flex-col items-center justify-center text-center z-10',
-  main: 'w-full',
+  main: 'w-full px-4 md:px-6 lg:px-8',
   
   // 타이포그래피
   h1: 'text-4xl md:text-5xl font-bold mb-3 text-white drop-shadow-lg',
@@ -17,7 +17,7 @@ export const styles = {
   smallText: 'text-sm text-gray-600',
   
   // 카드
-  card: 'bg-white border-l-4 border-l-green-500 border border-gray-200 rounded-lg p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-green-400 hover:shadow-green-100',
+  card: 'bg-white border-l-4 border-l-green-500 border border-gray-200 rounded-lg p-4 md:p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-green-400 hover:shadow-green-100',
   
   // 그리드
   grid: 'flex flex-col items-center gap-6 md:gap-8',
@@ -40,7 +40,7 @@ export const styles = {
   techStackLabel: 'font-semibold text-green-700 mr-2 min-w-[70px]',
   
   // 기술 스택 섹션
-  techStackSection: 'mb-8 md:mb-12 bg-green-50 rounded-xl p-6 md:p-8 border border-green-100',
+  techStackSection: 'mb-8 md:mb-12 bg-green-50 rounded-xl p-4 md:p-6 lg:p-8 border border-green-100',
   techStackTitle: 'text-2xl md:text-3xl font-bold mb-6 text-green-700 text-center',
   techStackCard: 'flex flex-col items-center justify-center p-4 bg-white rounded-lg border border-green-200 hover:border-green-400 hover:bg-green-50 hover:shadow-md transition-all duration-200',
   techLogo: 'w-12 h-12 md:w-16 md:h-16 object-contain mb-2',
