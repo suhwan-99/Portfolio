@@ -54,7 +54,7 @@ export const ProjectCard = ({ project }) => {
           <h3 className={styles.h3}>기여 내용</h3>
           <ul className={styles.list}>
             {project.contributions.map((contribution, index) => (
-              <li key={index}>{contribution}</li>
+              <li key={index} className="flex items-start gap-2 before:content-['✓'] before:text-green-500 before:font-bold before:mt-0.5">{contribution}</li>
             ))}
           </ul>
         </div>
@@ -65,7 +65,7 @@ export const ProjectCard = ({ project }) => {
           <h3 className={styles.h3}>성과</h3>
           <ul className={styles.list}>
             {project.achievements.map((achievement, index) => (
-              <li key={index}>{achievement}</li>
+              <li key={index} className="flex items-start gap-2 before:content-['✓'] before:text-green-500 before:font-bold before:mt-0.5">{achievement}</li>
             ))}
           </ul>
         </div>
