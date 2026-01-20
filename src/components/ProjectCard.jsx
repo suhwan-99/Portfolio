@@ -18,7 +18,7 @@ export const ProjectCard = ({ project }) => {
               {techStackArray.map((tech, index) => {
                 const logoPath = getTechLogo(tech)
                 return (
-                  <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-md text-xs border border-green-200 hover:bg-green-100 transition-colors duration-200">
+                  <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50/80 backdrop-blur-sm rounded-lg text-xs border border-green-200/50 hover:bg-green-100/90 hover:scale-105 hover:shadow-sm transition-all duration-300 ease-out">
                     {logoPath && (
                       <TechLogo techName={tech} className="w-4 h-4" />
                     )}
@@ -36,7 +36,7 @@ export const ProjectCard = ({ project }) => {
               {(Array.isArray(project.ide) ? project.ide : [project.ide]).map((ide, index) => {
                 const logoPath = getTechLogo(ide)
                 return (
-                  <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-md text-xs border border-green-200 hover:bg-green-100 transition-colors duration-200">
+                  <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50/80 backdrop-blur-sm rounded-lg text-xs border border-green-200/50 hover:bg-green-100/90 hover:scale-105 hover:shadow-sm transition-all duration-300 ease-out">
                     {logoPath && (
                       <TechLogo techName={ide} className="w-4 h-4" />
                     )}
