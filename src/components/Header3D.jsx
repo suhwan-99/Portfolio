@@ -9,6 +9,7 @@ const Header3D = () => {
   const [visibleConnections, setVisibleConnections] = useState(new Set())
   const [tiltAngle, setTiltAngle] = useState(0) // 기울기 각도 (-10 ~ +10도)
   const [mouseX, setMouseX] = useState(0)
+  const [scrollOpacity, setScrollOpacity] = useState(1) // 스크롤에 따른 투명도
 
   // 애니메이션 시작 함수
   const startAnimation = () => {
@@ -62,6 +63,41 @@ const Header3D = () => {
       clearTimeout(timer)
     }
   }, []) // 빈 배열로 마운트 시 한 번만 실행
+
+  // 스크롤에 따른 노드/연결선/텍스트 투명도 조절
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const windowHeight = window.innerHeight
+      
+      // 헤더 영역 높이 (비디오 높이)
+      const headerHeight = 1080
+      
+      // 스크롤이 헤더 영역을 벗어나면 점진적으로 사라짐
+      let opacity = 1
+      if (scrollTop > 0) {
+        // 스크롤이 시작되면 점진적으로 사라짐
+        const fadeStart = 0
+        const fadeEnd = headerHeight * 0.5 // 헤더 높이의 50% 지점에서 완전히 사라짐
+        const fadeRange = fadeEnd - fadeStart
+        
+        if (scrollTop <= fadeEnd) {
+          opacity = Math.max(0, 1 - (scrollTop / fadeRange))
+        } else {
+          opacity = 0
+        }
+      }
+      
+      setScrollOpacity(opacity)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // 초기 실행
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   // 마우스 움직임 감지 및 기울기 계산
   useEffect(() => {
@@ -165,7 +201,8 @@ const Header3D = () => {
           pointerEvents: 'none',
           transform: `perspective(1000px) rotateY(${tiltAngle}deg)`,
           transformOrigin: 'center center',
-          transition: 'transform 0.3s ease-out'
+          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out',
+          opacity: scrollOpacity
         }}
       >
         <defs>
