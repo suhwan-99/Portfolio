@@ -2,14 +2,16 @@
 
 export const styles = {
   // 레이아웃
-  container: 'min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/20 w-full mx-auto',
+  container: 'min-h-screen bg-gradient-to-br via-white to-green-50/20 w-full mx-auto',
   header: 'mb-16 md:mb-20',
-  headerContainer: 'relative w-full opacity-50',
-  headerContent: 'absolute inset-0 flex flex-col items-center justify-center text-center z-10',
+  headerContainer: 'relative w-full',
+  headerContent: 'absolute inset-0 flex flex-col items-end justify-start text-left z-10 p-6 md:p-10 lg:p-12',
+  header3D: 'absolute inset-0 flex items-center justify-end pr-10 md:pr-20 z-10',
   main: 'w-full px-4 md:px-6 lg:px-8',
   
   // 타이포그래피
-  h1: 'text-4xl md:text-5xl font-bold mb-3 text-white drop-shadow-2xl tracking-tight',
+  h1: 'text-4xl md:text-5xl font-bold mb-3 text-[#f8f9fa] drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] tracking-tight',
+  headerSlogan: 'text-2xl md:text-4xl lg:text-5xl font-serif italic text-white/90 drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] tracking-wide mb-2',
   h2: 'text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-500 border-b-2 border-green-200/60 pb-3 tracking-wide',
   h3: 'text-sm font-bold text-green-700 mb-2 tracking-wide',
   subtitle: 'text-base md:text-lg text-white drop-shadow-lg tracking-normal',
@@ -42,12 +44,13 @@ export const styles = {
   // 기술 스택 섹션
   techStackSection: 'mb-10 md:mb-16 bg-gradient-to-br from-green-50/70 via-white/50 to-green-50/50 backdrop-blur-md rounded-2xl p-5 md:p-7 lg:p-10 border border-green-100/40 shadow-xl shadow-green-100/20',
   techStackTitle: 'text-2xl md:text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-600 text-center tracking-wide',
-  techStackCard: 'flex flex-col items-center justify-center p-5 bg-white/80 backdrop-blur-sm rounded-xl border border-green-200/40 hover:border-green-400 hover:bg-white/95 hover:shadow-xl hover:shadow-green-200/30 hover:scale-105 transition-all duration-300 ease-out',
+  techStackCard: 'relative flex flex-col items-center justify-center p-5 bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 shadow-xl shadow-black/10 hover:border-white/60 hover:bg-white/40 hover:shadow-2xl hover:shadow-green-200/30 hover:scale-105 transition-all duration-300 ease-out before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-t after:from-white/20 after:to-transparent after:pointer-events-none',
   techLogo: 'w-12 h-12 md:w-16 md:h-16 object-contain mb-2',
   techName: 'text-xs md:text-sm text-center text-gray-700 font-medium',
   
-  // 헤더 이미지
+  // 헤더 이미지/비디오
   headerImage: 'w-full h-[600px] object-cover shadow-md',
+  headerVideo: 'w-full h-[600px] object-cover shadow-md',
   
   // 유틸리티
   flexGap: 'flex gap-3 flex-wrap',
