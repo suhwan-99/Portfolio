@@ -42,9 +42,9 @@ export const styles = {
   techStackLabel: 'font-semibold text-green-700 mr-2 min-w-[70px]',
   
   // 기술 스택 섹션
-  techStackSection: 'mb-10 md:mb-16 bg-gradient-to-br from-green-50/70 via-white/50 to-green-50/50 backdrop-blur-md rounded-2xl p-5 md:p-7 lg:p-10 border border-green-100/40 shadow-xl shadow-green-100/20',
+  techStackSection: 'mb-10 md:mb-16 bg-gradient-to-br from-green-50/70 via-white/50 to-green-50/50 backdrop-blur-md rounded-2xl p-5 md:p-7 lg:p-10 border-2 border-green-300/60 shadow-xl shadow-green-100/20',
   techStackTitle: 'text-2xl md:text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-600 text-center tracking-wide',
-  techStackCard: 'relative flex flex-col items-center justify-center p-5 bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 shadow-xl shadow-black/10 hover:border-white/60 hover:bg-white/40 hover:shadow-2xl hover:shadow-green-200/30 hover:scale-105 transition-all duration-300 ease-out before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-t after:from-white/20 after:to-transparent after:pointer-events-none',
+  techStackCard: 'relative flex flex-col items-center justify-center p-5 bg-white/30 backdrop-blur-xl rounded-2xl border border-white/40 shadow-xl shadow-black/10 hover:border-green-300/50 hover:bg-white/40 hover:shadow-2xl hover:shadow-green-200/30 hover:scale-105 transition-all duration-300 ease-out before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-t after:from-white/20 after:to-transparent after:pointer-events-none',
   techLogo: 'w-12 h-12 md:w-16 md:h-16 object-contain mb-2',
   techName: 'text-xs md:text-sm text-center text-gray-700 font-medium',
   

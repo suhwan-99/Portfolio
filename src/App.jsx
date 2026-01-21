@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import ProjectCard from './components/ProjectCard'
 import { projects } from './data/projects'
 import { styles } from './constants/styles'
@@ -12,6 +12,14 @@ import Header3D from './components/Header3D'
 const App = () => {
   const allTechStack = getAllTechStack(projects)
   const videoRef = useRef(null)
+  const headerRef = useRef(null)
+  const mainRef = useRef(null)
+  const [isTextScanning, setIsTextScanning] = useState(false)
+
+  // 텍스트 스캔 애니메이션 시작
+  useEffect(() => {
+    setIsTextScanning(true)
+  }, [])
 
   useEffect(() => {
     const video = videoRef.current
@@ -68,7 +76,7 @@ const App = () => {
   
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
+      <header ref={headerRef} className={styles.header}>
         <div className={styles.headerContainer}>
           <div style={{ position: 'relative', width: '100%' }}>
             <video 
@@ -100,9 +108,9 @@ const App = () => {
             </video>
           </div>
           <div className={styles.headerContent}>
-            <p className={styles.headerSlogan}>Building Beautiful Experiences</p>
-            <h1 className={styles.h1}>강수환</h1>
-            <h1 className={styles.h1}>프론트엔드 개발자</h1>
+            <p className={`${styles.headerSlogan} ${isTextScanning ? 'text-scan-animation' : ''}`} style={{ animationDelay: '0s' }}>Building Beautiful Experiences</p>
+            <h1 className={`${styles.h1} ${isTextScanning ? 'text-scan-animation' : ''}`} style={{ animationDelay: '0.5s' }}>강수환</h1>
+            <h1 className={`${styles.h1} ${isTextScanning ? 'text-scan-animation' : ''}`} style={{ animationDelay: '1s' }}>프론트엔드 개발자</h1>
           </div>
         </div>
           <div className={styles.header3D}>
@@ -110,7 +118,7 @@ const App = () => {
           </div>
       </header>
       
-      <main className={styles.main}>
+      <main ref={mainRef} className={styles.main}>
         {/* 전체 기술 스택 섹션 */}
         {allTechStack.length > 0 && (
           <section className={styles.techStackSection}>

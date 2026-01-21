@@ -203,3 +203,18 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* 텍스트 스캔 애니메이션 */
+@keyframes text-scan {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+.text-scan-animation {
+  animation: text-scan 3s ease-in-out forwards;
+  clip-path: inset(0 100% 0 0);
+}

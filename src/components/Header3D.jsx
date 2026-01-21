@@ -51,11 +51,12 @@ const Header3D = () => {
     }
   }, [])
 
-  // 컴포넌트 마운트 후 1초 뒤 자동 애니메이션 시작
+  // 컴포넌트 마운트 후 4초 뒤 자동 애니메이션 시작 (텍스트 스캔과 동기화)
+  // 마지막 텍스트가 1s delay + 3s duration = 4s에 끝나므로 4초에 노드 등장
   useEffect(() => {
     const timer = setTimeout(() => {
       startAnimation()
-    }, 1000) // 1초 후 시작
+    }, 4000) // 4초 후 시작 (마지막 텍스트 스캔 애니메이션 완료와 동기화)
 
     return () => {
       clearTimeout(timer)
