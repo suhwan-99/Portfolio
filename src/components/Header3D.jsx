@@ -88,12 +88,12 @@ const Header3D = () => {
 
   // 노드 정의: 3D 공간 좌표 (x, y, z) - 중앙을 기준으로 배치
   const nodes = [
-    { id: 'frontend', label: 'Frontend', position: { x: -110, y: 160, z: 40 }, labelOffset: { x: -3, y: 0 } },
+    { id: 'frontend', label: 'Frontend', position: { x: -100, y: 160, z: 40 }, labelOffset: { x: -3, y: 0 } },
     { id: 'backend', label: 'Backend', position: { x: 340, y: -90, z: 40 }, labelOffset: { x: 3, y: 0 } },
     { id: 'database', label: 'Database', position: { x: 335, y: 100, z: -90 }, labelOffset: { x: 3, y: -1.5 } },
     { id: 'iot', label: 'IoT', position: { x: -160, y: -130, z: -70 }, labelOffset: { x: -3, y: 1.5 } },
     { id: 'api', label: 'API', position: { x: 100, y: 0, z: 100 }, labelOffset: { x: 0, y: -2.5 } },
-    { id: 'state', label: 'State', position: { x: -250, y: -30, z: 120 }, labelOffset: { x: -3, y: 0 } },
+    { id: 'state', label: 'State', position: { x: -230, y: -30, z: 120 }, labelOffset: { x: -3, y: 0 } },
   ]
 
   // 연결선 정의: from -> to
@@ -218,12 +218,12 @@ const Header3D = () => {
                     attributeName="stroke-dashoffset"
                     from={length}
                     to="0"
-                    dur="4s"
+                    dur="8s"
                     fill="freeze"
                   />
                 </line>
               )}
-              {/* 데이터 흐름 애니메이션 (흐르는 효과) - 연결선이 그려진 후 시작 */}
+              {/* 데이터 흐름 애니메이션 (흐르는 효과) - 연결선이 그려지는 동안 함께 흐름 */}
               {isVisible && (
                 <>
                   <line
@@ -242,8 +242,8 @@ const Header3D = () => {
                     <animate
                       attributeName="stroke-dashoffset"
                       values={`${length};-${length}`}
-                      dur="4.5s"
-                      begin="4.5s"
+                      dur="4s"
+                      begin="0s"
                       repeatCount="indefinite"
                     />
                   </line>
@@ -265,7 +265,7 @@ const Header3D = () => {
                       attributeName="stroke-dashoffset"
                       values={`${length * 1.2};-${length * 0.8}`}
                       dur="2s"
-                      begin="2.3s"
+                      begin="0s"
                       repeatCount="indefinite"
                     />
                   </line>

@@ -26,8 +26,32 @@ const App = () => {
         console.error(e)
       }
 
+      // 비디오가 끝날 때 자연스럽게 다시 재생
+      const handleEnded = () => {
+        video.currentTime = 0
+        video.play().catch((error) => {
+        })
+      }
+
+      // 비디오가 거의 끝날 때 미리 재생 준비 (끊김 방지)
+      const handleTimeUpdate = () => {
+        // 비디오가 끝나기 0.1초 전에 미리 재생 준비
+        if (video.duration - video.currentTime < 0.1) {
+          video.currentTime = 0
+        }
+      }
+
+      // 버퍼링이 완료되면 재생
+      const handleCanPlayThrough = () => {
+        video.play().catch((error) => {
+        })
+      }
+
       video.addEventListener('loadeddata', handleLoadedData)
       video.addEventListener('error', handleError)
+      video.addEventListener('ended', handleEnded)
+      video.addEventListener('timeupdate', handleTimeUpdate)
+      video.addEventListener('canplaythrough', handleCanPlayThrough)
 
       // 비디오 로드 시도
       video.load()
@@ -35,6 +59,9 @@ const App = () => {
       return () => {
         video.removeEventListener('loadeddata', handleLoadedData)
         video.removeEventListener('error', handleError)
+        video.removeEventListener('ended', handleEnded)
+        video.removeEventListener('timeupdate', handleTimeUpdate)
+        video.removeEventListener('canplaythrough', handleCanPlayThrough)
       }
     }
   }, [])
@@ -61,7 +88,8 @@ const App = () => {
                 position: 'relative',
                 zIndex: 0,
                 filter: 'none',
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                transition: 'opacity 0.3s ease-in-out'
               }}
             >
               {/* 브라우저 호환성을 위한 여러 포맷 제공 */}
