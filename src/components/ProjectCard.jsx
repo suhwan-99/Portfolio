@@ -1,9 +1,20 @@
+import { useMemo } from 'react'
 import { styles } from '../constants/styles'
 import { getTechLogo } from '../data/techLogos'
 import TechLogo from './TechLogo'
 
 export const ProjectCard = ({ project }) => {
-  const techStackArray = Array.isArray(project.techStack) ? project.techStack : (project.techStack ? [project.techStack] : [])
+  const techStackArray = useMemo(() => 
+    Array.isArray(project.techStack) 
+      ? project.techStack 
+      : (project.techStack ? [project.techStack] : []),
+    [project.techStack]
+  )
+
+  const ideArray = useMemo(() => 
+    Array.isArray(project.ide) ? project.ide : (project.ide ? [project.ide] : []),
+    [project.ide]
+  )
   
   return (
     <div className={`${styles.card} w-full max-w-full md:max-w-[700px]`}>
@@ -29,11 +40,11 @@ export const ProjectCard = ({ project }) => {
             </div>
           </div>
         )}
-        {project.ide && (
+        {ideArray.length > 0 && (
           <div className="mb-3">
             <span className={styles.techStackLabel}>IDE:</span>
             <div className="flex flex-wrap gap-2 mt-2">
-              {(Array.isArray(project.ide) ? project.ide : [project.ide]).map((ide, index) => {
+              {ideArray.map((ide, index) => {
                 const logoPath = getTechLogo(ide)
                 return (
                   <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50/80 backdrop-blur-sm rounded-lg text-xs border border-green-200/50 hover:bg-green-100/90 hover:scale-105 hover:shadow-sm transition-all duration-300 ease-out">
