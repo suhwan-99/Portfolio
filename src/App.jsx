@@ -17,11 +17,27 @@ const App = () => {
   const techStackSectionRef = useRef(null)
   const projectRefs = useRef([])
   const [isTextScanning, setIsTextScanning] = useState(false)
+  const [isLargeScreen, setIsLargeScreen] = useState(false)
   const [scrollAnimations, setScrollAnimations] = useState({
-    techStack: { scale: 0.3, opacity: 0 },
-    projects: projects.map(() => ({ scale: 0.3, opacity: 0 }))
+    techStack: { scale: 0.3, opacity: 0, translateY: 200 },
+    projects: projects.map(() => ({ scale: 0.3, opacity: 0, translateY: 0, translateX: 0 })),
+    footer: { scale: 0.3, opacity: 0, translateY: 0, translateX: 0 }
   })
   const [headerTextOpacity, setHeaderTextOpacity] = useState(1)
+
+  // 화면 크기 감지
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 768)
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    
+    return () => {
+      window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
 
   // 텍스트 스캔 애니메이션 시작
   useEffect(() => {
@@ -30,10 +46,14 @@ const App = () => {
 
   // 스크롤 기반 애니메이션
   useEffect(() => {
+    let ticking = false
+    
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-      const windowHeight = window.innerHeight
-      const headerHeight = headerRef.current?.offsetHeight || windowHeight
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+          const windowHeight = window.innerHeight
+          const headerHeight = headerRef.current?.offsetHeight || windowHeight
 
       // 헤더 텍스트 투명도 조절
       let textOpacity = 1
@@ -50,137 +70,192 @@ const App = () => {
       }
       setHeaderTextOpacity(textOpacity)
 
-      // Used Skills 섹션 애니메이션
+      // Used Skills 섹션 애니메이션 (노드/연결선 위로 올라오는 효과)
+      // 확장된 스크롤 범위 사용
+      const extendedScrollRange = headerHeight * 4.5 // 1080px * 4.5 = 4860px (0.8씩 할당)
+      const normalizedScroll = Math.min(scrollTop, extendedScrollRange) / headerHeight
+      
       if (techStackSectionRef.current) {
-        const techSection = techStackSectionRef.current
-        const techRect = techSection.getBoundingClientRect()
-        const techTop = techRect.top + scrollTop
-        const techHeight = techRect.height
-        const techCenter = techTop + techHeight / 2
+        // 스크롤 진행도에 따른 애니메이션
+        // 0 ~ 0.3: 시작 구간 (아래쪽에 숨어있음)
+        // 0.3 ~ 0.8: 올라오는 구간 (0.8 할당)
+        // 0.8 ~ 1.1: 사라지는 구간 (프로젝트 카드가 나타나기 시작)
+        let progress = 0
+        let fadeOutProgress = 0
         
-        // 뷰포트 중앙 위치
-        const viewportCenter = scrollTop + windowHeight / 2
+        if (normalizedScroll >= 0.3 && normalizedScroll <= 0.8) {
+          // 올라오는 구간 (0.5 구간)
+          progress = (normalizedScroll - 0.3) / 0.5 // 0 ~ 1로 정규화
+        } else if (normalizedScroll > 0.8 && normalizedScroll <= 1.1) {
+          // 완전히 나타난 상태에서 사라지는 구간 (0.3 구간)
+          progress = 1.0
+          fadeOutProgress = (normalizedScroll - 0.8) / 0.3 // 0 ~ 1로 정규화 (사라지는 진행도)
+        } else if (normalizedScroll > 1.1) {
+          // 완전히 사라진 후
+          progress = 1.0
+          fadeOutProgress = 1.0
+        }
         
-        // 섹션 중심이 뷰포트 중앙에 도달하는 지점을 기준으로 계산
-        const distanceFromCenter = Math.abs(viewportCenter - techCenter)
-        const animationRange = windowHeight * 0.8 // 애니메이션 범위를 줄여서 더 명확하게
-        
-        // 거리에 따른 진행도 (0 ~ 1)
-        const progress = Math.max(0, Math.min(1, 1 - (distanceFromCenter / animationRange)))
-        
+        // 진행도에 따른 scale, opacity, translateY 계산
         let scale = 0.3
         let opacity = 0
+        let translateY = 200 // 초기 위치 (아래쪽)
         
         if (progress > 0) {
-          // 파라볼라 곡선: 작아서 커지고 다시 작아지는 효과
-          const normalizedProgress = progress * 2 // 0 ~ 2
-          if (normalizedProgress <= 1) {
-            // 0 ~ 1: 작아서 커지는 구간
-            scale = 0.3 + (normalizedProgress * normalizedProgress) * 0.7
-            opacity = normalizedProgress * normalizedProgress
+          // ease-out 곡선 사용
+          const easedProgress = 1 - Math.pow(1 - progress, 3)
+          scale = 0.3 + easedProgress * 0.7
+          translateY = 200 * (1 - easedProgress) // 아래에서 위로 올라옴
+          
+          // 사라지는 효과 적용
+          if (fadeOutProgress > 0) {
+            const fadeOutEased = fadeOutProgress // 선형으로 사라짐
+            opacity = easedProgress * (1 - fadeOutEased)
+            scale = (0.3 + easedProgress * 0.7) * (1 - fadeOutEased * 0.3) // 약간 작아지면서 사라짐
           } else {
-            // 1 ~ 2: 커서 작아지는 구간
-            const reverseProgress = 2 - normalizedProgress
-            scale = 0.3 + (reverseProgress * reverseProgress) * 0.7
-            opacity = reverseProgress * reverseProgress
+            opacity = easedProgress
           }
         }
         
         setScrollAnimations(prev => ({
           ...prev,
-          techStack: { scale, opacity }
+          techStack: { scale, opacity, translateY }
         }))
       }
 
-      // 프로젝트 카드 애니메이션
+      // 프로젝트 카드 캐러셀 애니메이션 (헤더 영역 내에서 하나씩 나타났다 사라지는 효과)
+      // 각 프로젝트 카드에 0.8씩 할당
+      // 프로젝트 카드가 시작되는 지점 (used skills가 사라지기 시작하는 지점)
+      const projectStartScroll = 1.1
+      
+      // 각 프로젝트마다 0.8씩 할당
+      // 각 카드는 나타남(50%) + 사라짐(50%) 구간을 가짐
+      const projectCount = projects.length
+      const projectDuration = 0.8 // 각 프로젝트에 0.8 할당
+      const appearDuration = projectDuration * 0.5 // 나타나는 구간 (50%) = 0.4
+      const disappearDuration = projectDuration * 0.5 // 사라지는 구간 (50%) = 0.4
+      
       projectRefs.current.forEach((projectRef, index) => {
         if (!projectRef) return
         
-        const projectRect = projectRef.getBoundingClientRect()
-        const projectTop = projectRect.top + scrollTop
-        const projectHeight = projectRect.height
-        const projectCenter = projectTop + projectHeight / 2
+        // 각 프로젝트의 시작 지점 계산
+        const projectStart = projectStartScroll + (index * projectDuration)
+        const projectAppearEnd = projectStart + appearDuration
+        const projectDisappearStart = projectAppearEnd
+        const projectDisappearEnd = projectStart + projectDuration
         
-        // 뷰포트 중앙 위치
-        const viewportCenter = scrollTop + windowHeight / 2
+        let appearProgress = 0
+        let disappearProgress = 0
         
-        // 이전 섹션들이 완료되었는지 확인 (순차적 애니메이션)
-        let shouldAnimate = false
-        
-        // 첫 번째 프로젝트는 Used Skills 섹션이 완전히 지나간 후 나타나도록
-        if (index === 0) {
-          if (techStackSectionRef.current) {
-            const techSection = techStackSectionRef.current
-            const techRect = techSection.getBoundingClientRect()
-            const techTop = techRect.top + scrollTop
-            const techHeight = techRect.height
-            const techBottom = techTop + techHeight
-            
-            // Used Skills 섹션이 뷰포트 중앙을 완전히 지나갔는지 확인
-            if (techBottom < viewportCenter - windowHeight * 0.3) {
-              shouldAnimate = true
-            }
-          } else {
-            // Used Skills 섹션이 없으면 바로 나타남
-            shouldAnimate = true
-          }
-        } else {
-          // 이전 프로젝트가 뷰포트 중앙을 완전히 지나갔는지 확인
-          const prevRef = projectRefs.current[index - 1]
-          if (prevRef) {
-            const prevRect = prevRef.getBoundingClientRect()
-            const prevTop = prevRect.top + scrollTop
-            const prevBottom = prevTop + prevRect.height
-            
-            // 이전 프로젝트가 뷰포트 중앙을 완전히 지나갔는지 확인
-            if (prevBottom < viewportCenter - windowHeight * 0.3) {
-              shouldAnimate = true
-            }
-          }
+        if (normalizedScroll >= projectStart && normalizedScroll <= projectAppearEnd) {
+          // 나타나는 구간
+          appearProgress = (normalizedScroll - projectStart) / appearDuration
+        } else if (normalizedScroll > projectAppearEnd && normalizedScroll <= projectDisappearEnd) {
+          // 나타난 후 사라지는 구간
+          appearProgress = 1.0
+          disappearProgress = (normalizedScroll - projectDisappearStart) / disappearDuration
+        } else if (normalizedScroll > projectDisappearEnd) {
+          // 완전히 사라진 후
+          appearProgress = 1.0
+          disappearProgress = 1.0
         }
         
-        if (!shouldAnimate) {
-          setScrollAnimations(prev => ({
-            ...prev,
-            projects: prev.projects.map((p, i) => 
-              i === index ? { scale: 0.3, opacity: 0 } : p
-            )
-          }))
-          return
-        }
-        
-        // 섹션 중심이 뷰포트 중앙에 도달하는 지점을 기준으로 계산
-        const distanceFromCenter = Math.abs(viewportCenter - projectCenter)
-        const animationRange = windowHeight * 0.8 // 애니메이션 범위를 줄여서 더 명확하게
-        
-        // 거리에 따른 진행도 (0 ~ 1)
-        const progress = Math.max(0, Math.min(1, 1 - (distanceFromCenter / animationRange)))
-        
+        // 진행도에 따른 scale, opacity, translateY, translateX 계산
         let scale = 0.3
         let opacity = 0
+        let translateY = 0 // 화면 정중앙에 나오도록 0으로 설정
+        let translateX = 30 // 오른쪽으로 조금 이동
         
-        if (progress > 0) {
-          // 파라볼라 곡선: 작아서 커지고 다시 작아지는 효과
-          const normalizedProgress = progress * 2 // 0 ~ 2
-          if (normalizedProgress <= 1) {
-            // 0 ~ 1: 작아서 커지는 구간
-            scale = 0.3 + (normalizedProgress * normalizedProgress) * 0.7
-            opacity = normalizedProgress * normalizedProgress
+        if (appearProgress > 0) {
+          // 나타나는 효과: ease-out 곡선
+          const easedAppear = 1 - Math.pow(1 - appearProgress, 3)
+          
+          // 사라지는 효과 적용
+          if (disappearProgress > 0) {
+            const easedDisappear = disappearProgress // 선형으로 사라짐
+            const finalProgress = easedAppear * (1 - easedDisappear)
+            
+            scale = 0.3 + (finalProgress * 0.7)
+            opacity = finalProgress
+            translateY = 0 // 정중앙 유지
+            translateX = 30 * finalProgress // 나타날 때 오른쪽으로 이동
           } else {
-            // 1 ~ 2: 커서 작아지는 구간
-            const reverseProgress = 2 - normalizedProgress
-            scale = 0.3 + (reverseProgress * reverseProgress) * 0.7
-            opacity = reverseProgress * reverseProgress
+            // 나타나는 중
+            scale = 0.3 + (easedAppear * 0.7)
+            opacity = easedAppear
+            translateY = 0 // 정중앙 유지
+            translateX = 30 * easedAppear // 나타날 때 오른쪽으로 이동
           }
         }
         
         setScrollAnimations(prev => ({
           ...prev,
           projects: prev.projects.map((p, i) => 
-            i === index ? { scale, opacity } : p
+            i === index ? { scale, opacity, translateY, translateX } : p
           )
         }))
       })
+      
+      // Footer 애니메이션 (프로젝트 카드처럼 나타났다 사라지는 효과)
+      // 마지막 프로젝트 카드 이후에 Footer 나타남 (0.8 할당)
+      const footerStartScroll = projectStartScroll + (projectCount * projectDuration) // 1.1 + (3 * 0.8) = 3.5
+      const footerAppearEnd = footerStartScroll + appearDuration // 3.5~3.9 나타남
+      const footerDisappearStart = footerAppearEnd
+      const footerDisappearEnd = footerStartScroll + projectDuration // 3.5~4.3
+      
+      let footerAppearProgress = 0
+      let footerDisappearProgress = 0
+      
+      if (normalizedScroll >= footerStartScroll && normalizedScroll <= footerAppearEnd) {
+        // Footer가 나타나는 구간
+        footerAppearProgress = (normalizedScroll - footerStartScroll) / appearDuration
+      } else if (normalizedScroll > footerAppearEnd && normalizedScroll <= footerDisappearEnd) {
+        // 나타난 후 사라지는 구간
+        footerAppearProgress = 1.0
+        footerDisappearProgress = (normalizedScroll - footerDisappearStart) / disappearDuration
+      } else if (normalizedScroll > footerDisappearEnd) {
+        // 완전히 사라진 후
+        footerAppearProgress = 1.0
+        footerDisappearProgress = 1.0
+      }
+      
+      // Footer 애니메이션 계산 (프로젝트 카드와 동일한 효과)
+      let footerScale = 0.3
+      let footerOpacity = 0
+      let footerTranslateY = 0
+      let footerTranslateX = 30
+      
+      if (footerAppearProgress > 0) {
+        // 나타나는 효과: ease-out 곡선
+        const easedFooterAppear = 1 - Math.pow(1 - footerAppearProgress, 3)
+        
+        // 사라지는 효과 적용
+        if (footerDisappearProgress > 0) {
+          const easedFooterDisappear = footerDisappearProgress
+          const finalFooterProgress = easedFooterAppear * (1 - easedFooterDisappear)
+          
+          footerScale = 0.3 + (finalFooterProgress * 0.7)
+          footerOpacity = finalFooterProgress
+          footerTranslateY = 0
+          footerTranslateX = 30 * finalFooterProgress
+        } else {
+          // 나타나는 중
+          footerScale = 0.3 + (easedFooterAppear * 0.7)
+          footerOpacity = easedFooterAppear
+          footerTranslateY = 0
+          footerTranslateX = 30 * easedFooterAppear
+        }
+      }
+      
+      setScrollAnimations(prev => ({
+        ...prev,
+        footer: { scale: footerScale, opacity: footerOpacity, translateY: footerTranslateY, translateX: footerTranslateX }
+      }))
+      
+      ticking = false
+        })
+        ticking = true
+      }
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -244,9 +319,44 @@ const App = () => {
     }
   }, [])
   
+  // 스크롤 가능하도록 document 높이 설정 (각 섹션에 0.8씩 할당: used skills + 프로젝트 3개 + Footer = 4.0배)
+  useEffect(() => {
+    const extendedHeight = 1080 * 4.5 // 4860px (여유있게 설정)
+    document.documentElement.style.height = `${extendedHeight}px`
+    document.body.style.height = `${extendedHeight}px`
+    document.documentElement.style.minHeight = `${extendedHeight}px`
+    document.body.style.minHeight = `${extendedHeight}px`
+    return () => {
+      document.documentElement.style.height = ''
+      document.body.style.height = ''
+      document.documentElement.style.minHeight = ''
+      document.body.style.minHeight = ''
+    }
+  }, [])
+
   return (
-    <div className={styles.container} style={{ position: 'relative' }}>
-      <header ref={headerRef} className={styles.header} style={{ position: 'relative', zIndex: 1 }}>
+    <div 
+      className={styles.container} 
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '1080px',
+        overflow: 'hidden',
+        width: '100%'
+      }}
+    >
+      <header 
+        ref={headerRef} 
+        className={styles.header} 
+        style={{ 
+          position: 'relative', 
+          zIndex: 1,
+          height: '1080px',
+          width: '100%'
+        }}
+      >
         <div className={styles.headerContainer}>
           <div style={{ position: 'relative', width: '100%' }}>
             <video 
@@ -302,8 +412,10 @@ const App = () => {
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 20,
-          minHeight: '100vh'
+          zIndex: 10,
+          height: '1080px',
+          overflow: 'hidden',
+          pointerEvents: 'none'
         }}
       >
         {/* 전체 기술 스택 섹션 */}
@@ -312,11 +424,19 @@ const App = () => {
             ref={techStackSectionRef}
             className={styles.techStackSection}
             style={{
-              transform: `scale(${scrollAnimations.techStack.scale})`,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: `translate(-50%, -50%) scale(${scrollAnimations.techStack.scale}) translateY(${(scrollAnimations.techStack.translateY || 0) - (isLargeScreen ? 0 : 5)}px)`,
+              zIndex: 10,
               opacity: scrollAnimations.techStack.opacity,
               transformOrigin: 'center center',
               transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
-              willChange: 'transform, opacity'
+              willChange: 'transform, opacity',
+              pointerEvents: scrollAnimations.techStack.opacity > 0.5 ? 'auto' : 'none',
+              width: isLargeScreen ? '90%' : '95%',
+              maxWidth: '1200px',
+              maxHeight: isLargeScreen ? 'none' : '85vh'
             }}
           >
             <h2 className={styles.techStackTitle}>USED SKILLS</h2>
@@ -336,31 +456,56 @@ const App = () => {
           </section>
         )}
         
-        {/* 프로젝트 카드 섹션 */}
-        <section className="w-full flex justify-center px-4 md:px-6 lg:px-8">
-          <div className={styles.grid}>
-            {projects.map((project, index) => (
-              <div
-                key={project.id}
-                ref={el => {
-                  if (el) projectRefs.current[index] = el
-                }}
-                style={{
-                  transform: `scale(${scrollAnimations.projects[index]?.scale || 0.3})`,
-                  opacity: scrollAnimations.projects[index]?.opacity || 0,
-                  transformOrigin: 'center center',
-                  transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
-                  willChange: 'transform, opacity'
-                }}
-              >
-                <ProjectCard project={project} />
-              </div>
-            ))}
+        {/* 프로젝트 카드 개별 배치 */}
+        {projects.map((project, index) => (
+          <div
+            key={project.id}
+            ref={el => {
+              if (el) projectRefs.current[index] = el
+            }}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: `translate(-50%, -50%) scale(${scrollAnimations.projects[index]?.scale || 0.3}) translateY(${(scrollAnimations.projects[index]?.translateY || 0) - (isLargeScreen ? 5 : 3)}px) translateX(${(scrollAnimations.projects[index]?.translateX || 0) + (isLargeScreen ? -1 : -25)}px)`,
+              zIndex: 15,
+              opacity: scrollAnimations.projects[index]?.opacity || 0,
+              transformOrigin: 'center center',
+              transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
+              willChange: 'transform, opacity',
+              pointerEvents: scrollAnimations.projects[index]?.opacity > 0.5 ? 'auto' : 'none',
+              width: isLargeScreen ? '90%' : '95%',
+              maxWidth: '1200px',
+              maxHeight: isLargeScreen ? 'none' : '85vh'
+            }}
+          >
+            <ProjectCard project={project} />
           </div>
-        </section>
+        ))}
       </main>
       
-      <Footer />
+      {/* Footer 영역 (프로젝트 카드처럼 화면 정중앙에 배치) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '40%',
+          left: '50%',
+          transform: `translate(-50%, -50%) scale(${scrollAnimations.footer?.scale || 0.3}) translateY(${(scrollAnimations.footer?.translateY || 0) - (isLargeScreen ? 2 : 0)}px) translateX(${(scrollAnimations.footer?.translateX || 0) + (isLargeScreen ? -2 : -8)}px)`,
+          zIndex: 20,
+          opacity: scrollAnimations.footer?.opacity || 0,
+          transformOrigin: 'center center',
+          transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
+          willChange: 'transform, opacity',
+          pointerEvents: scrollAnimations.footer?.opacity > 0.9 ? 'auto' : 'none',
+          width: isLargeScreen ? '90%' : '95%',
+          maxWidth: '1200px',
+          maxHeight: isLargeScreen ? 'none' : '85vh'
+        }}
+      >
+        <div style={{ pointerEvents: 'auto' }}>
+          <Footer />
+        </div>
+      </div>
     </div>
   )
 }

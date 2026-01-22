@@ -188,7 +188,7 @@ const Header3D = () => {
     <div
       ref={containerRef}
       className="w-full h-full relative perspective-1000 overflow-hidden"
-      style={{ pointerEvents: 'auto' }}
+      style={{ pointerEvents: 'auto', zIndex: 5 }}
     >
       <svg
         ref={svgRef}
@@ -197,7 +197,7 @@ const Header3D = () => {
         preserveAspectRatio="xMidYMid meet"
         shapeRendering="geometricPrecision"
         style={{ 
-          zIndex: 1, 
+          zIndex: 5, 
           pointerEvents: 'none',
           transform: `perspective(1000px) rotateY(${tiltAngle}deg)`,
           transformOrigin: 'center center',

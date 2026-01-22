@@ -18,9 +18,9 @@ export const ProjectCard = ({ project }) => {
               {techStackArray.map((tech, index) => {
                 const logoPath = getTechLogo(tech)
                 return (
-                  <div key={index} className="flex items-center gap-1.5 px-2 py-1 bg-green-50/80 backdrop-blur-sm rounded-lg text-xs border border-green-200/50 hover:bg-green-100/90 hover:scale-105 hover:shadow-sm transition-all duration-300 ease-out">
+                  <div key={index} className="flex items-center gap-1 md:gap-1.5 px-1.5 md:px-2 py-0.5 md:py-1 bg-green-50/80 backdrop-blur-sm rounded-md md:rounded-lg text-[10px] md:text-xs border border-green-200/50 hover:bg-green-100/90 hover:scale-105 hover:shadow-sm transition-all duration-300 ease-out">
                     {logoPath && (
-                      <TechLogo techName={tech} className="w-4 h-4" />
+                      <TechLogo techName={tech} className="w-3 h-3 md:w-4 md:h-4" />
                     )}
                     <span className="text-gray-700">{tech}</span>
                   </div>

@@ -3,7 +3,7 @@ import { contactInfo } from '../data/contact'
 
 export const Footer = () => {
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} style={{ pointerEvents: 'auto' }}>
       <div className={styles.footerContainer}>
         <div className={styles.footerContent}>
           <h3 className={styles.footerTitle}>Contact</h3>
@@ -11,6 +11,7 @@ export const Footer = () => {
             <a 
               href={`mailto:${contactInfo.email}`}
               className={styles.footerLink}
+              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
             >
               <span className={styles.footerLinkIcon}>✉</span>
               <span>{contactInfo.email}</span>
@@ -18,6 +19,7 @@ export const Footer = () => {
             <a 
               href={`tel:${contactInfo.phone.replace(/-/g, '')}`}
               className={styles.footerLink}
+              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
             >
               <span className={styles.footerLinkIcon}>📱</span>
               <span>{contactInfo.phone}</span>
@@ -27,6 +29,7 @@ export const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
               className={styles.footerLink}
+              style={{ pointerEvents: 'auto', cursor: 'pointer' }}
             >
               <span className={styles.footerLinkIcon}>📝</span>
               <span>Notion</span>

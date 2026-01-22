@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 페이지 높이 고정 및 스크롤 제한 */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body {
+  overflow: hidden;
+}
+
+#root {
+  overflow: hidden;
+  position: relative;
+}
+
 @layer utilities {
   .perspective-1000 {
     perspective: 1000px;
